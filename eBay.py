@@ -110,7 +110,7 @@ try:
 
     # Open a CSV file to write the item details
     with open('eBay_items.csv', mode='w', newline='') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, quotechar='"', quoting=csv.QUOTE_MINIMAL)
         # Write the header
         header = ['ItemID', 'Title', 'Price', 'Currency', 'CategoryID', 'CategoryName', 'Description', 'Quantity', 'Brand', 'ListingURL', 'ImageURLs']
         writer.writerow(header)
