@@ -1,6 +1,9 @@
 import configparser
 import csv
 import re
+import time
+import random
+import requests
 from ebaysdk.trading import Connection as Trading
 from ebaysdk.exception import ConnectionError
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -19,6 +22,24 @@ USER_TOKEN = config['eBayAPI']['USER_TOKEN']
 def strip_html_tags(text):
     return BeautifulSoup(text, "html.parser").get_text()
 
+def retry(exceptions, tries=4, delay=3, backoff=2, jitter=0.1):
+    def deco_retry(f):
+        def f_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except exceptions as e:
+                    msg = f"{e}, Retrying in {mdelay} seconds..."
+                    print(msg)
+                    time.sleep(mdelay + random.uniform(0, jitter))
+                    mtries -= 1
+                    mdelay *= backoff
+            return f(*args, **kwargs)
+        return f_retry
+    return deco_retry
+
+@retry((ConnectionError, requests.exceptions.ReadTimeout), tries=4, delay=3, backoff=2)
 def get_item_details(api, item_id):
     try:
         item_response = api.execute('GetItem', {
@@ -67,7 +88,8 @@ try:
         devid=DEV_ID,
         certid=CERT_ID,
         token=USER_TOKEN,
-        config_file=None
+        config_file=None,
+        timeout=60  # Increase the timeout duration
     )
 
     item_ids = []
