@@ -1,6 +1,6 @@
-# eBay-listings
+# eBay-Listings
 
-This project fetches and stores details of active eBay listings into a CSV file. It uses the eBay Trading API to retrieve item details, including the item ID, title, price, currency, category ID, category name, description, quantity, brand, listing URL, and image URLs.
+This project fetches and stores details of active eBay listings into a CSV file. It uses the eBay Trading API to retrieve item details such as item ID, title, price, currency, category ID, category name, description, quantity, brand, listing URL, and image URLs. Additionally, it downloads and organizes item images by brand and title.
 
 ## Features
 
@@ -10,13 +10,17 @@ This project fetches and stores details of active eBay listings into a CSV file.
 - Constructs listing URLs.
 - Extracts and lists image URLs.
 - Stores all information in a CSV file.
+- Downloads and organizes item images by brand and title.
+- Implements retry logic and timeout for robust image downloading.
+- Ensures unique filenames for images to prevent overwriting.
 
 ## Requirements
 
 - Python 3.x
-- `ebaysdk` library
-- `tqdm` library
-- `beautifulsoup4` library
+- `ebaysdk`
+- `tqdm`
+- `beautifulsoup4`
+- `requests`
 
 ## Installation
 
@@ -52,6 +56,7 @@ This project fetches and stores details of active eBay listings into a CSV file.
    ```
 
 2. The script will create a file named `eBay_items.csv` with the following columns:
+
    - ItemID
    - Title
    - Price
@@ -63,6 +68,14 @@ This project fetches and stores details of active eBay listings into a CSV file.
    - Brand
    - ListingURL
    - ImageURLs
+
+3. Run the script to download and organize images:
+
+   ```sh
+   python images.py
+   ```
+
+This will create an images directory with subdirectories for each brand, containing item-specific folders named after the item titles, and items without a brand are grouped in a no_brand folder.
 
 ## Contributing
 
